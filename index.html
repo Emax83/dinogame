@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dino Game - Chrome Dinosaur Game Clone</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Vercel Web Analytics -->
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🦖 Dino Game</h1>
+        <div class="game-info">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="high-score">High Score: <span id="highScore">0</span></div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="200"></canvas>
+        <div class="instructions">
+            <p><strong>Instructions:</strong> Press <kbd>Space</kbd> or <kbd>↑</kbd> to jump. Avoid the cacti!</p>
+            <p id="gameOverText" class="game-over hidden">Game Over! Press <kbd>Space</kbd> or <kbd>↑</kbd> to restart</p>
+        </div>
+        <div class="controls">
+            <button id="startBtn">Start Game</button>
+            <button id="jumpBtn">Jump</button>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>

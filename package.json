@@ -1,0 +1,24 @@
+{
+  "name": "dinogame",
+  "version": "1.0.0",
+  "description": "A Chrome dinosaur game clone with Vercel Web Analytics",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx http-server -p 3000",
+    "build": "echo 'Build complete - static site ready'",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [
+    "game",
+    "dino",
+    "dinosaur",
+    "arcade",
+    "vercel",
+    "analytics"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
