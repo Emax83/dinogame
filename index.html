@@ -3,7 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Dino Pixel Runner</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="author" content="Emax83dev">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Gioca a Dino Runner, un avvincente gioco arcade in pixel art. Salta ostacoli, colleziona punti e sblocca nuovi dinosauri in questo runner infinito.">
+    <meta name="keywords" content="dino runner, gioco dinosauro, t-rex game, pixel art, arcade, html5 game, browser game, emax83dev">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dinogame-arcade.vercel.app/">
+    <meta property="og:title" content="Dino Runner Arcade Game">
+    <meta property="og:description" content="Gioca a Dino Runner, un avvincente gioco arcade in pixel art.">
+    <meta property="og:image" content="https://dinogame-arcade.vercel.app/android-chrome-512x512.png">
+
+    <title>Dino Runner Arcade Game</title>
     <style>
         /* Stile Minimalista e Monospace */
         body {
@@ -13,6 +27,7 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -74,6 +89,17 @@
             height: 40px;
             image-rendering: pixelated;
         }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        footer a {
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -112,6 +138,10 @@
         <button onclick="location.reload()">RICOMINCIA (INVIO)</button>
     </div>
 </div>
+
+<footer>
+    Copyright @2026 <a href="https://www.emax83dev.it" target="_blank">emax83dev</a>
+</footer>
 
 <script>
 /**
