@@ -44,13 +44,13 @@ This game is integrated with **Vercel Web Analytics** to track visitor behavior 
 
 ### How It Works
 
-The analytics implementation follows the HTML approach from Vercel's documentation:
+The analytics implementation uses the `@vercel/analytics` package via CDN:
 
 ```html
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+<script type="module">
+    import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics/+esm';
+    inject();
 </script>
-<script defer src="/_vercel/insights/script.js"></script>
 ```
 
 ### Tracked Events
