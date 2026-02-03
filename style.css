@@ -4,6 +4,7 @@
             padding: 0;
             background-color: #ffffff;
             font-family: 'Courier New', Courier, monospace;
+            font-size: 14pt;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -46,7 +47,9 @@
             text-align: center;
         }
 
-        .hidden { display: none; }
+        .hidden { 
+            display: none!important; 
+        }
 
         button {
                 background: #ffffff;
@@ -64,8 +67,8 @@
         button img {
             display: block;
             margin: 0 auto 5px;
-            width: 40px;
-            height: 40px;
+            width: 100px;
+            height: auto;
             image-rendering: pixelated;
         }
 
@@ -106,5 +109,20 @@
             #game-container, footer {
                 display: none;
             }
+        }
+
+        #game-controls {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex;
+            gap: 10px;
+        }
+
+        #game-controls button {
+            padding: 5px 15px;
+            margin: 0;
         }
     

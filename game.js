@@ -5,6 +5,11 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const startMenu = document.getElementById('start-menu');
 const gameOverScreen = document.getElementById('game-over');
+const pauseBtn = document.getElementById('pause-btn');
+const gameControls = document.getElementById('game-controls');
+
+// Assicura che i controlli siano nascosti all'avvio.
+gameControls.classList.add('hidden');
 
 // Configurazione Canvas
 canvas.width = 800;
@@ -30,11 +35,11 @@ let nextLevelTime = 60;
 const dino = {
     x: 200,
     y: 330,
-    width: 40,
-    height: 40,
+    width: 100,
+    height: 100,
     dy: 0,
-    jumpForce: 12,
-    gravity: 0.6,
+    jumpForce: 15,
+    gravity: 0.7,
     isGrounded: false,
     type: 'T-Rex'
 };
@@ -78,6 +83,8 @@ function startGame(type) {
     dinoImg.onload = () => {
         gameState = 'PLAYING';
         startMenu.classList.add('hidden');
+        gameControls.classList.remove('hidden');
+        pauseBtn.innerText = '❚❚';
         score = 0;
         time = 0;
         bgX = 0;
@@ -86,7 +93,7 @@ function startGame(type) {
         
         // Reset Difficoltà
         level = 1;
-        gameSpeed = 5;
+        gameSpeed = 6;
         spawnRate = 100;
         framesSinceLastSpawn = 0;
         nextLevelScore = 1000;
@@ -248,6 +255,7 @@ function levelUp() {
 
 function endGame() {
     gameState = 'GAMEOVER';
+    gameControls.classList.add('hidden');
     if (score > highScore) {
         highScore = score;
         localStorage.setItem('dinoHighScore', highScore);
@@ -256,6 +264,31 @@ function endGame() {
     document.getElementById('high-score-msg').innerText = `Record: ${highScore}`;
     gameOverScreen.classList.remove('hidden');
 }
+
+// Funzione Pausa
+window.togglePause = function() {
+    if (gameState === 'PLAYING') {
+        gameState = 'PAUSED';
+        pauseBtn.innerText = '▶';
+        
+        // Disegna scritta PAUSA
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000';
+        ctx.font = "40px monospace";
+        ctx.fillText("PAUSA", canvas.width / 2 - 60, canvas.height / 2);
+    } else if (gameState === 'PAUSED') {
+        gameState = 'PLAYING';
+        pauseBtn.innerText = '❚❚';
+        pauseBtn.blur(); // Rimuove il focus dal bottone per evitare conflitti con la barra spaziatrice
+        requestAnimationFrame(update);
+    }
+};
+
+// Funzione Stop
+window.stopGame = function() {
+    location.reload();
+};
 
 // Input: Tastiera
 window.addEventListener('keydown', (e) => {

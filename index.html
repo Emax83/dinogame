@@ -34,12 +34,13 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
 
     <!-- Apple touch icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/img/apple-touch-icon-167x167.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/img/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="120x120" href="/img/apple-touch-icon-120x120.png">
-
-    <!-- Safari pinned tab icon -->
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <!-- Safari Pinned Tab -->
+    <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#007AFF">
 
     <!-- Theme / tile colors -->
     <meta name="theme-color" content="#ffffff">
@@ -63,6 +64,11 @@
 
 <div id="game-container">
     <canvas id="gameCanvas"></canvas>
+
+    <div id="game-controls" class="hidden">
+        <button id="pause-btn" onclick="togglePause()">❚❚</button>
+        <button id="stop-btn" onclick="stopGame()">■</button>
+    </div>
 
     <div id="start-menu" class="overlay">
         <h1>DINO RUNNER</h1>
