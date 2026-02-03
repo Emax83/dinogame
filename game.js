@@ -28,7 +28,7 @@ let nextLevelTime = 60;
 
 // Proprietà del Dinosauro
 const dino = {
-    x: 50,
+    x: 200,
     y: 330,
     width: 40,
     height: 40,
@@ -81,7 +81,7 @@ function startGame(type) {
         score = 0;
         time = 0;
         bgX = 0;
-        dino.x = 50; // Reset posizione iniziale
+        dino.x = 100; // Reset posizione iniziale
         obstacles = []; // Reset ostacoli
         
         // Reset Difficoltà
@@ -282,11 +282,43 @@ window.addEventListener('keydown', (e) => {
 });
 
 // Input: Touch per Mobile
+let touchStartX = 0;
+let touchStartY = 0;
+
 canvas.addEventListener('touchstart', (e) => {
-    if (dino.isGrounded && gameState === 'PLAYING') {
-        dino.dy = -dino.jumpForce;
-        dino.isGrounded = false;
-    }
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
     e.preventDefault();
 }, {passive: false});
 
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault(); // Previene lo scroll della pagina
+}, {passive: false});
+
+canvas.addEventListener('touchend', (e) => {
+    if (gameState !== 'PLAYING') return;
+
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+
+    // Se lo spostamento orizzontale è significativo (> 30px) e prevale su quello verticale
+    if (Math.abs(diffX) > 30 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) {
+            // Swipe Destra -> Avanti
+            dino.x = Math.min(dino.x + 32, canvas.width - dino.width);
+        } else {
+            // Swipe Sinistra -> Indietro
+            dino.x = Math.max(dino.x - 32, 0);
+        }
+    } else {
+        // Tap (tocco breve) o Swipe Verticale -> Salto
+        if (dino.isGrounded) {
+            dino.dy = -dino.jumpForce;
+            dino.isGrounded = false;
+        }
+    }
+    e.preventDefault();
+});
