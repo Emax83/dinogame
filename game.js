@@ -23,6 +23,8 @@ let gameSpeed = 5;
 let obstacles = [];
 let frameCount = 0;
 let highScore = localStorage.getItem('dinoHighScore') || 0;
+let lastTime = 0;
+let accTime = 0;
 
 // Variabili Difficoltà
 let level = 1;
@@ -41,15 +43,16 @@ const dino = {
     jumpForce: 15,
     gravity: 0.7,
     isGrounded: false,
-    type: 'T-Rex'
+    type: 'T-Rex',
+    margin: 10
 };
 
-// 1. Definiamo i percorsi delle immagini
-const dinoSprites = {
-    'T-Rex': '/img/dino_01.png',
-    'Triceratops': '/img/dino_02.png',
-    'Brachio': '/img/dino_03.png',
-    'Raptor': '/img/dino_04.png'
+// 1. Definiamo i percorsi delle immagini e configurazione hitbox
+const dinoConfig = {
+    'T-Rex': { src: '/img/dino_01.png', margin: 20 },
+    'Triceratops': { src: '/img/dino_02.png', margin: 15 },
+    'Brachio': { src: '/img/dino_03.png', margin: 10 },
+    'Raptor': { src: '/img/dino_04.png', margin: 25 }
 };
 
 // Creiamo un oggetto Image globale
@@ -69,7 +72,9 @@ let bgX = 0;
 // Funzione Inizio Gioco
 function startGame(type) {
     dino.type = type;
-    dinoImg.src = dinoSprites[type]; // Carica l'immagine corrispondente
+    const config = dinoConfig[type];
+    dinoImg.src = config.src; // Carica l'immagine corrispondente
+    dino.margin = config.margin; // Imposta il margine per la hitbox
 
     /*
     gameState = 'PLAYING';
@@ -98,6 +103,9 @@ function startGame(type) {
         framesSinceLastSpawn = 0;
         nextLevelScore = 1000;
         nextLevelTime = 60;
+
+        lastTime = performance.now();
+        accTime = 0;
 
         requestAnimationFrame(update);
     };
@@ -146,8 +154,12 @@ class Obstacle {
     }
 }
 
-function update() {
+function update(currentTime) {
     if (gameState !== 'PLAYING') return;
+
+    if (!currentTime) currentTime = performance.now();
+    const deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
 
     // Pulizia schermo
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -166,10 +178,11 @@ function update() {
     }
 
     // Gestione tempo e punteggio
-    frameCount++;
-    if (frameCount % 60 === 0) {
+    accTime += deltaTime;
+    while (accTime >= 1000) {
         time++;
         score += 5; // Punti per il tempo
+        accTime -= 1000;
         
         // Aumento difficoltà per Tempo
         if (time >= nextLevelTime) {
@@ -212,11 +225,17 @@ function update() {
         obs.draw();
 
         // Collisione
+        // Calcolo hitbox ridotta in base al margine del dinosauro
+        const hitboxX = dino.x + dino.margin;
+        const hitboxY = dino.y + dino.margin;
+        const hitboxW = dino.width - (dino.margin * 2);
+        const hitboxH = dino.height - (dino.margin * 2);
+
         if (
-            dino.x < obs.x + obs.width &&
-            dino.x + dino.width > obs.x &&
-            dino.y < obs.y + obs.height &&
-            dino.y + dino.height > obs.y
+            hitboxX < obs.x + obs.width &&
+            hitboxX + hitboxW > obs.x &&
+            hitboxY < obs.y + obs.height &&
+            hitboxY + hitboxH > obs.y
         ) {
             endGame();
         }
@@ -281,6 +300,7 @@ window.togglePause = function() {
         gameState = 'PLAYING';
         pauseBtn.innerText = '❚❚';
         pauseBtn.blur(); // Rimuove il focus dal bottone per evitare conflitti con la barra spaziatrice
+        lastTime = performance.now();
         requestAnimationFrame(update);
     }
 };
