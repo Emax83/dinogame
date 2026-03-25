@@ -53,9 +53,49 @@ const dino = {
 const dinoConfig = {
     'T-Rex': { src: '/img/dino_01.png', margin: 20 , weight: 0.8 },
     'Triceratops': { src: '/img/dino_02.png', margin: 15 , weight: 0.7},
-    'Brachio': { src: '/img/dino_03.png', margin: 10 , weight: 1},
-    'Raptor': { src: '/img/dino_04.png', margin: 25, weight: 0.5}
+    'Brachiosaurus': { src: '/img/dino_03.png', margin: 10 , weight: 1},
+    'Velociraptor': { src: '/img/dino_04.png', margin: 25, weight: 0.6},
+    'Pterodacty ': { src: '/img/dino_05.png', margin: 25, weight: 0.5},
+    'Stegosaurus': { src: '/img/dino_06.png', margin: 15, weight: 0.8},
+    'Dilophosaurus': { src: '/img/dino_07.png', margin: 25, weight: 0.6},
+    'Ankylosaurus': { src: '/img/dino_08.png', margin: 10, weight: 0.9},
+    'Spinosaurus': { src: '/img/dino_09.png', margin: 15, weight: 0.7},
+    'Diplodocus': { src: '/img/dino_10.png', margin: 20, weight: 1},
 };
+
+
+function fillDinosSelection(){
+
+    const dinoDiv = document.getElementById('char-selection');
+    dinoDiv.innerHTML ='';
+
+    Object.keys(dinoConfig).forEach(dinoType => {
+        const config = dinoConfig[dinoType];
+        // Now you can use 'dinoType' (e.g., 'T-Rex') and 'config' (e.g., { src: '...', margin: ... })
+        console.log(`Dinosaur: ${dinoType}`, config);
+
+        let btn = document.createElement('button');
+        btn.setAttribute('onclick', `startGame('${dinoType}')`);
+        let img = document.createElement('img');
+        img.setAttribute('src', config.src);
+        img.setAttribute('alt', dinoType);
+        let div = document.createElement('div');
+        div.innerText = dinoType;
+        btn.appendChild(img);
+        btn.appendChild(div);
+        dinoDiv.appendChild(btn);
+        /* <div id="char-selection">
+            <!--
+            <button onclick="startGame('T-Rex')">
+                <img src="/img/dino_01.png" alt="T-Rex">
+                <div>T-Rex</div>
+            </button>*/
+
+    });
+}
+
+
+fillDinosSelection();
 
 // Creiamo un oggetto Image globale
 const dinoImg = new Image();
@@ -114,7 +154,7 @@ function startGame(type) {
 
 function resetLevels() {
     level = 1;
-    gameSpeed = 6;
+    gameSpeed = 5;
     spawnRate = 100;
     framesSinceLastSpawn = 0;
     nextLevelScore = 500;
@@ -267,7 +307,7 @@ function update(currentTime) {
     // UI: Punteggio e Tempo
     ctx.fillStyle = '#000';
     ctx.font = "20px monospace";
-    ctx.fillText(`SCORE: ${score} | LVL: ${level}`, 20, 30);
+    ctx.fillText(`SCORE: ${score} | LVL: ${level} | SPEED: ${gameSpeed}`, 20, 30);
     ctx.fillText(`TIME: ${time}s`, canvas.width - 150, 30);
 
     requestAnimationFrame(update);
@@ -279,7 +319,8 @@ function levelUp() {
     gameSpeed += 0.5; // Aumenta velocità
 
     // Diminuisce intervallo spawn (rocce più vicine), minimo 40 frames
-    if (spawnRate > 40) {
+    // valore iniziale: 100
+    if (spawnRate > 30) { 
         spawnRate -= 5;
     }
 
@@ -388,4 +429,40 @@ canvas.addEventListener('touchend', (e) => {
         }
     }
     e.preventDefault();
+});
+
+
+// Aggiunge la funzionalità di scorrimento tramite trascinamento per la selezione del personaggio
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('char-selection');
+    if (slider) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.style.userSelect = 'none';
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.style.removeProperty('user-select');
+        });
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.style.removeProperty('user-select');
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // Moltiplicatore per rendere lo scorrimento più reattivo
+            slider.scrollLeft = scrollLeft - walk;
+        });
+    }
 });
