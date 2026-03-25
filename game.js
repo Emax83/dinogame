@@ -55,7 +55,7 @@ const dinoConfig = {
     'Triceratops': { src: '/img/dino_02.png', margin: 15 , weight: 0.7},
     'Brachiosaurus': { src: '/img/dino_03.png', margin: 10 , weight: 1},
     'Velociraptor': { src: '/img/dino_04.png', margin: 25, weight: 0.6},
-    'Pterodacty ': { src: '/img/dino_05.png', margin: 25, weight: 0.5},
+    'Pterodactyl': { src: '/img/dino_05.png', margin: 25, weight: 0.5},
     'Stegosaurus': { src: '/img/dino_06.png', margin: 15, weight: 0.8},
     'Dilophosaurus': { src: '/img/dino_07.png', margin: 25, weight: 0.6},
     'Ankylosaurus': { src: '/img/dino_08.png', margin: 10, weight: 0.9},
