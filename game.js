@@ -30,8 +30,10 @@ let accTime = 0;
 let level = 1;
 let spawnRate = 100;
 let framesSinceLastSpawn = 0;
-let nextLevelScore = 1000;
-let nextLevelTime = 60;
+let nextLevelScore = 500;
+let nextLevelTime = 30;
+let lastLevelTime = 0;
+// resetLevels()
 
 // Proprietà del Dinosauro
 const dino = {
@@ -49,10 +51,10 @@ const dino = {
 
 // 1. Definiamo i percorsi delle immagini e configurazione hitbox
 const dinoConfig = {
-    'T-Rex': { src: '/img/dino_01.png', margin: 20 },
-    'Triceratops': { src: '/img/dino_02.png', margin: 15 },
-    'Brachio': { src: '/img/dino_03.png', margin: 10 },
-    'Raptor': { src: '/img/dino_04.png', margin: 25 }
+    'T-Rex': { src: '/img/dino_01.png', margin: 20 , weight: 0.8 },
+    'Triceratops': { src: '/img/dino_02.png', margin: 15 , weight: 0.7},
+    'Brachio': { src: '/img/dino_03.png', margin: 10 , weight: 1},
+    'Raptor': { src: '/img/dino_04.png', margin: 25, weight: 0.5}
 };
 
 // Creiamo un oggetto Image globale
@@ -75,6 +77,7 @@ function startGame(type) {
     const config = dinoConfig[type];
     dinoImg.src = config.src; // Carica l'immagine corrispondente
     dino.margin = config.margin; // Imposta il margine per la hitbox
+    dino.gravity = config.weight; // imposta il peso, maggiore è il peso, aumenta la gravità
 
     /*
     gameState = 'PLAYING';
@@ -86,6 +89,7 @@ function startGame(type) {
 
     // Aspettiamo che l'immagine sia caricata prima di partire (opzionale ma consigliato)
     dinoImg.onload = () => {
+
         gameState = 'PLAYING';
         startMenu.classList.add('hidden');
         gameControls.classList.remove('hidden');
@@ -97,13 +101,8 @@ function startGame(type) {
         obstacles = []; // Reset ostacoli
         
         // Reset Difficoltà
-        level = 1;
-        gameSpeed = 6;
-        spawnRate = 100;
-        framesSinceLastSpawn = 0;
-        nextLevelScore = 1000;
-        nextLevelTime = 60;
-
+        resetLevels();
+        
         lastTime = performance.now();
         accTime = 0;
 
@@ -111,6 +110,16 @@ function startGame(type) {
     };
 
     
+}
+
+function resetLevels() {
+    level = 1;
+    gameSpeed = 6;
+    spawnRate = 100;
+    framesSinceLastSpawn = 0;
+    nextLevelScore = 500;
+    nextLevelTime = 30;
+    lastLevelTime = 0;
 }
 
 // 3. Modifichiamo il disegno dentro la funzione update()
@@ -177,18 +186,20 @@ function update(currentTime) {
         if (bgX + scaledWidth < canvas.width) ctx.drawImage(bgImg, bgX + scaledWidth * 2, 0, scaledWidth, canvas.height);
     }
 
+    
     // Gestione tempo e punteggio
     accTime += deltaTime;
     while (accTime >= 1000) {
         time++;
         score += 5; // Punti per il tempo
         accTime -= 1000;
-        
+        //console.log("Livelli: ", lastLevelTime, nextLevelTime, level);
         // Aumento difficoltà per Tempo
-        if (time >= nextLevelTime) {
+        if (lastLevelTime >= nextLevelTime) {
             levelUp();
-            nextLevelTime += 60;
+            lastLevelTime = 0;
         }
+        lastLevelTime += 1;
     }
 
     // Movimento Dinosauro (Gravità)
@@ -211,7 +222,7 @@ function update(currentTime) {
     */
    drawDino();
 
-
+    // in base al livello deve aumentare la difficoltà
     // Generazione Ostacoli
     framesSinceLastSpawn++;
     if (framesSinceLastSpawn >= spawnRate) {
@@ -263,13 +274,16 @@ function update(currentTime) {
 }
 
 function levelUp() {
+    console.log("levelUp() called");
     level++;
     gameSpeed += 0.5; // Aumenta velocità
-    
+
     // Diminuisce intervallo spawn (rocce più vicine), minimo 40 frames
     if (spawnRate > 40) {
         spawnRate -= 5;
     }
+
+    console.table("Aumento Livello",level,gameSpeed,spawnRate);
 }
 
 function endGame() {
