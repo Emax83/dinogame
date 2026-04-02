@@ -430,6 +430,11 @@ canvas.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].clientX;
     touchStartY = e.changedTouches[0].clientY;
     e.preventDefault();
+
+    if (gameState === 'PLAYING') {
+        playAudio(dino);
+    }
+
 }, {passive: false});
 
 canvas.addEventListener('touchmove', (e) => {
