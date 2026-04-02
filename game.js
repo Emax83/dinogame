@@ -7,6 +7,9 @@ const startMenu = document.getElementById('start-menu');
 const gameOverScreen = document.getElementById('game-over');
 const pauseBtn = document.getElementById('pause-btn');
 const gameControls = document.getElementById('game-controls');
+const btnAudio = document.getElementById('btnAudio');
+btnAudio.addEventListener('click', toggleAudio);
+
 
 // Assicura che i controlli siano nascosti all'avvio.
 gameControls.classList.add('hidden');
@@ -33,6 +36,8 @@ let framesSinceLastSpawn = 0;
 let nextLevelScore = 500;
 let nextLevelTime = 30;
 let lastLevelTime = 0;
+let audioOnOff = false;
+let dinoAudioUrl = '';
 // resetLevels()
 
 // Proprietà del Dinosauro
@@ -46,21 +51,22 @@ const dino = {
     gravity: 0.7,
     isGrounded: false,
     type: 'T-Rex',
-    margin: 10
+    margin: 10,
+    audio: '',
 };
 
 // 1. Definiamo i percorsi delle immagini e configurazione hitbox
 const dinoConfig = {
-    'T-Rex': { src: '/img/dino_01.png', margin: 20 , weight: 0.8 },
-    'Triceratops': { src: '/img/dino_02.png', margin: 15 , weight: 0.7},
-    'Brachiosaurus': { src: '/img/dino_03.png', margin: 10 , weight: 1},
-    'Velociraptor': { src: '/img/dino_04.png', margin: 25, weight: 0.6},
-    'Pterodactyl': { src: '/img/dino_05.png', margin: 25, weight: 0.5},
-    'Stegosaurus': { src: '/img/dino_06.png', margin: 15, weight: 0.8},
-    'Dilophosaurus': { src: '/img/dino_07.png', margin: 25, weight: 0.6},
-    'Ankylosaurus': { src: '/img/dino_08.png', margin: 10, weight: 0.9},
-    'Spinosaurus': { src: '/img/dino_09.png', margin: 15, weight: 0.7},
-    'Diplodocus': { src: '/img/dino_10.png', margin: 20, weight: 1},
+    'T-Rex': { src: '/img/dino_01.png', margin: 20 , weight: 0.8 , audio: '/audio/dino_01.wav'},
+    'Triceratops': { src: '/img/dino_02.png', margin: 15 , weight: 0.7, audio: '/audio/dino_02.wav'},
+    'Brachiosaurus': { src: '/img/dino_03.png', margin: 10 , weight: 1, audio: '/audio/dino_03.wav'},
+    'Velociraptor': { src: '/img/dino_04.png', margin: 25, weight: 0.6, audio: '/audio/dino_04.wav'},
+    'Pterodactyl': { src: '/img/dino_05.png', margin: 25, weight: 0.5, audio: '/audio/dino_05.wav'},
+    'Stegosaurus': { src: '/img/dino_06.png', margin: 15, weight: 0.8, audio: '/audio/dino_06.wav'},
+    'Dilophosaurus': { src: '/img/dino_07.png', margin: 25, weight: 0.6, audio: '/audio/dino_07.wav'},
+    'Ankylosaurus': { src: '/img/dino_08.png', margin: 10, weight: 0.9, audio: '/audio/dino_08.wav'},
+    'Spinosaurus': { src: '/img/dino_09.png', margin: 15, weight: 0.7, audio: '/audio/dino_09.wav'},
+    'Diplodocus': { src: '/img/dino_10.png', margin: 20, weight: 1, audio: '/audio/dino_10.wav'},
 };
 
 
@@ -70,9 +76,10 @@ function fillDinosSelection(){
     dinoDiv.innerHTML ='';
 
     Object.keys(dinoConfig).forEach(dinoType => {
-        const config = dinoConfig[dinoType];
         // Now you can use 'dinoType' (e.g., 'T-Rex') and 'config' (e.g., { src: '...', margin: ... })
-        console.log(`Dinosaur: ${dinoType}`, config);
+        //console.log(`Dinosaur: ${dinoType}`, config);
+
+        const config = dinoConfig[dinoType];
 
         let btn = document.createElement('button');
         btn.setAttribute('onclick', `startGame('${dinoType}')`);
@@ -118,7 +125,7 @@ function startGame(type) {
     dinoImg.src = config.src; // Carica l'immagine corrispondente
     dino.margin = config.margin; // Imposta il margine per la hitbox
     dino.gravity = config.weight; // imposta il peso, maggiore è il peso, aumenta la gravità
-
+    dino.audio = config.audio; // imposto il verso.
     /*
     gameState = 'PLAYING';
     startMenu.classList.add('hidden');
@@ -339,6 +346,31 @@ function endGame() {
     gameOverScreen.classList.remove('hidden');
 }
 
+function toggleAudio() {
+    audioOnOff = !audioOnOff;
+    btnAudio.innerText = audioOnOff === false ? '🔇' : '🔊';
+    localStorage.setItem('audioOnOff', audioOnOff);
+    //console.log('toggleAudio: ' + audioOnOff);
+}
+
+function playAudio(dino) {
+    try{
+        //console.log('playAudio: ' + audioOnOff);
+        if(audioOnOff === true){
+            const audio = new Audio(dino.audio);
+            audio.currentTime = 0;
+            // 0.9 = più grave/lento, 1.1 = più acuto/veloce
+            audio.playbackRate = 0.8;
+            audio.play().catch(error => {
+                console.log("Riproduzione bloccata dal browser. L'utente deve interagire con la pagina.");
+            });
+        }
+    }
+    catch(err){
+        console.log('playAudio; Error.', err);
+    }
+}
+
 // Funzione Pausa
 window.togglePause = function() {
     if (gameState === 'PLAYING') {
@@ -372,6 +404,7 @@ window.addEventListener('keydown', (e) => {
             dino.dy = -dino.jumpForce;
             dino.isGrounded = false;
         }
+        playAudio(dino);
     }
 
     if (e.code === 'ArrowRight' && gameState === 'PLAYING') {
@@ -434,6 +467,10 @@ canvas.addEventListener('touchend', (e) => {
 
 // Aggiunge la funzionalità di scorrimento tramite trascinamento per la selezione del personaggio
 document.addEventListener('DOMContentLoaded', () => {
+
+    audioOnOff = localStorage.getItem('audioOnOff') === 'false';
+    toggleAudio();
+
     const slider = document.getElementById('char-selection');
     if (slider) {
         let isDown = false;
