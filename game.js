@@ -314,7 +314,7 @@ function update(currentTime) {
     // UI: Punteggio e Tempo
     ctx.fillStyle = '#000';
     ctx.font = "20px monospace";
-    ctx.fillText(`SCORE: ${score} | LVL: ${level} | SPD: ${gameSpeed}`, 20, 30);
+    ctx.fillText(`SCORE: ${score} | LVL: ${level}`, 20, 30);
     ctx.fillText(`TIME: ${time}s`, canvas.width - 150, 30);
 
     requestAnimationFrame(update);
